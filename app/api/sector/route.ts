@@ -1,0 +1,2 @@
+import {sectorStocks} from '@/lib/providers';
+export async function GET(r:Request){const p=new URL(r.url).searchParams,id=p.get('id'),kind=p.get('kind');if(!id||!/^\d{1,5}$/.test(id)||!['theme','industry'].includes(kind??''))return Response.json({error:'분류 오류'},{status:400});try{return Response.json({stocks:await sectorStocks(id,kind!)});}catch{return Response.json({error:'원본 연결이 지연되었습니다. 잠시 후 다시 시도해 주세요.'},{status:503});}}
