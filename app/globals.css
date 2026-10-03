@@ -26,6 +26,20 @@
    STOCK14 거래대금 상위 리스트 표시 안정화
    ========================================================= */
 
+.sync .sync-controls{display:flex;flex-direction:row;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px}
+.auto-refresh{white-space:nowrap}
+.auto-refresh>span{font-size:10px;font-weight:700;color:var(--muted)}
+.auto-refresh.enabled{border-color:#6b997b;background:#edf6ef;color:#315f40}
+.auto-refresh.enabled>span{color:#315f40}
+.dark .auto-refresh.enabled{border-color:#638b70;background:#293e30;color:#bddbc6}
+.dark .auto-refresh.enabled>span{color:#bddbc6}
+@media(max-width:520px){
+ .page-top{flex-wrap:wrap}
+ .page-top>.sync{width:100%;flex-direction:row;justify-content:space-between;align-items:center}
+ .sync>div:first-child{align-items:flex-start}
+ .sync .sync-controls{max-width:150px}
+}
+
 .workspace {
   height: auto !important;
   min-height: 0 !important;
