@@ -4,6 +4,7 @@ import {BarChart3,CalendarDays,RefreshCw,Search,ChevronRight,ChevronLeft,X,Exter
 import {bootstrap} from '@/lib/bootstrap';
 import {money,percent,sourceLinks,type Stock,type Sector,type MarketData} from '@/lib/market';
 type Data=MarketData&{history?:string[]};
+const BASE_PATH=process.env.NEXT_PUBLIC_BASE_PATH||'';
 const colors=['coral','violet','mint','amber','sky','rose'];
 const dateLabel=(d:string)=>new Date(d+'T12:00:00+09:00').toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
 function cls(n:number){return n<0?'down':n>0?'up':'neutral';}
@@ -12,14 +13,14 @@ export default function Page(){
  const [memberStatus,setMemberStatus]=useState<Record<string,string>>({});
  const memberRequests=useRef(new Set<string>());
  const requestId=useRef(0),modalRef=useRef<HTMLDivElement>(null),focusBefore=useRef<HTMLElement|null>(null);
- async function refresh(){setBusy(true);setError('');try{const r=await fetch('/api/market');if(!r.ok)throw Error();setData(await r.json());}catch{setError('새 자료를 불러오지 못했습니다. 마지막 수집 자료를 표시합니다.');}finally{setBusy(false);}}
+ async function refresh(){setBusy(true);setError('');try{const r=await fetch(BASE_PATH+'/api/market');if(!r.ok)throw Error();setData(await r.json());}catch{setError('새 자료를 불러오지 못했습니다. 마지막 수집 자료를 표시합니다.');}finally{setBusy(false);}}
  useEffect(()=>{refresh();const t=setInterval(refresh,120000);return()=>clearInterval(t);},[]);
  useEffect(()=>{const stored=localStorage.getItem('stock14-dark');setDark(stored==='true');},[]);
  const modalOpen=!!(selected||stock||day||showInfo);
  useEffect(()=>{if(!modalOpen)return;focusBefore.current=document.activeElement as HTMLElement;document.body.style.overflow='hidden';modalRef.current?.focus();function key(e:KeyboardEvent){if(e.key==='Escape')close();if(e.key==='Tab'&&modalRef.current){const list=Array.from(modalRef.current.querySelectorAll<HTMLElement>('button,a,input,select')).filter(x=>!x.hasAttribute('disabled'));if(!list.length)return;if(e.shiftKey&&document.activeElement===list[0]){e.preventDefault();list.at(-1)?.focus();}else if(!e.shiftKey&&document.activeElement===list.at(-1)){e.preventDefault();list[0].focus();}}}document.addEventListener('keydown',key);return()=>{document.body.style.overflow='';document.removeEventListener('keydown',key);focusBefore.current?.focus();};},[modalOpen]);
  function close(){requestId.current++;setSelected(null);setStock(null);setDay(null);setShowInfo(false);setDetailBusy(false);}
- async function openSector(s:Sector){setSelected(s);setDetailBusy(true);const token=++requestId.current;try{const r=await fetch(`/api/sector?id=${s.id}&kind=${s.kind}`);const j=await r.json() as {stocks:Stock[];error?:string};if(token!==requestId.current)return;if(!r.ok)throw Error(j.error);const members=j.stocks.map((x:Stock)=>({...x,sector:s.name}));setSelected({...s,stocks:members});const field=s.kind==='theme'?'themes':'industries';setData(prev=>({...prev,[field]:prev[field].map(t=>t.id===s.id?{...t,stocks:members}:t)}));}catch(e){if(token===requestId.current)setError((e as Error).message);}finally{if(token===requestId.current)setDetailBusy(false);}}
- async function openDay(d:string){setBusy(true);setError('');try{const r=await fetch('/api/market?date='+d);const j=await r.json() as Data & {error?:string};if(!r.ok)throw Error(j.error);setDay(j);setDayTab('sectors');}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
+ async function openSector(s:Sector){setSelected(s);setDetailBusy(true);const token=++requestId.current;try{const r=await fetch(`${BASE_PATH}/api/sector?id=${s.id}&kind=${s.kind}`);const j=await r.json() as {stocks:Stock[];error?:string};if(token!==requestId.current)return;if(!r.ok)throw Error(j.error);const members=j.stocks.map((x:Stock)=>({...x,sector:s.name}));setSelected({...s,stocks:members});const field=s.kind==='theme'?'themes':'industries';setData(prev=>({...prev,[field]:prev[field].map(t=>t.id===s.id?{...t,stocks:members}:t)}));}catch(e){if(token===requestId.current)setError((e as Error).message);}finally{if(token===requestId.current)setDetailBusy(false);}}
+ async function openDay(d:string){setBusy(true);setError('');try{const r=await fetch(BASE_PATH+'/api/market?date='+d);const j=await r.json() as Data & {error?:string};if(!r.ok)throw Error(j.error);setDay(j);setDayTab('sectors');}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
  const sectors=(kind==='theme'?data.themes:data.industries).filter(s=>s.name.includes(query));
  const filtered=data.stocks.filter(s=>s.change>=minChange&&s.value>=minValue*1e8&&(market==='ALL'||s.market===market)&&(!query||s.name.includes(query)||s.code.includes(query)||s.sector?.includes(query)));
  const currentSectors=sectors.filter(s=>s.change>0).slice(0,6);
@@ -32,7 +33,7 @@ export default function Page(){
    if(memberRequests.current.has(requestKey))continue;
    memberRequests.current.add(requestKey);
    setMemberStatus(prev=>({...prev,[key]:'loading'}));
-   fetch(`/api/sector?id=${s.id}&kind=${s.kind}`).then(async r=>{
+   fetch(`${BASE_PATH}/api/sector?id=${s.id}&kind=${s.kind}`).then(async r=>{
     const j=await r.json() as {stocks?:Stock[];error?:string};
     if(!r.ok||!j.stocks?.length)throw Error(j.error||'구성종목 응답이 비어 있습니다.');
     const field=s.kind==='theme'?'themes':'industries';

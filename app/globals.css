@@ -21,3 +21,63 @@
  .ranking .stock-table{flex:none;max-height:none}
  .ranking .table-body{max-height:calc(30 * 63px + 6px)}
 }
+
+/* =========================================================
+   STOCK14 거래대금 상위 리스트 표시 안정화
+   ========================================================= */
+
+.workspace {
+  height: auto !important;
+  min-height: 0 !important;
+  align-items: start !important;
+}
+
+.ranking {
+  display: block !important;
+  min-height: 0 !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.ranking .stock-table {
+  display: block !important;
+  flex: none !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.ranking .table-head {
+  position: sticky !important;
+  top: 0;
+  z-index: 2;
+  background: var(--surface);
+}
+
+.ranking .table-body {
+  display: grid !important;
+  min-height: 300px !important;
+  max-height: 900px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  align-content: start !important;
+  scrollbar-gutter: stable;
+}
+
+.ranking .table-body .stock-row {
+  width: 100% !important;
+  margin: 0 !important;
+  min-height: 57px !important;
+  height: 57px !important;
+}
+
+@media (max-width: 800px) {
+  .workspace {
+    height: auto !important;
+  }
+
+  .ranking .table-body {
+    min-height: 250px !important;
+    max-height: 700px !important;
+  }
+}
