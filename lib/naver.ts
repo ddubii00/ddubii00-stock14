@@ -1,0 +1,10 @@
+import type {Stock} from './market';
+export type NaverKind='industry'|'theme'|'groups';
+export type NaverPeriod='daily'|'weekly'|'monthly';
+export type TopCompany={code:string;name:string;value:number};
+export type NaverSector={id:string;rank:number;name:string;change:number;rise:number;flat:number;fall:number;updatedAt:string;volume:number|null;value:number|null;marketCap:number;topChange:TopCompany[];topCap:TopCompany[]};
+export type NaverStock=Stock&{volume:number;marketCap:number};
+export type NaverRanking={kind:NaverKind;period:NaverPeriod;items:NaverSector[];fetchedAt:string};
+export type NaverMembers={stocks:NaverStock[];fetchedAt:string};
+export const periodNames={daily:'일간',weekly:'주간',monthly:'월간'};
+export const kindNames={industry:'업종',theme:'테마',groups:'그룹사'};
