@@ -98,7 +98,7 @@
 
 /* Naver's period rankings share the existing turnover panel. */
 .preferences-status{padding:0 18px 12px;color:var(--muted);font-size:11px;line-height:1.5}
-.preferences-status button{margin-left:8px;color:var(--accent);text-decoration:underline}
+.preferences-status button,.preferences-status a{margin-left:8px;color:var(--accent);text-decoration:underline}
 .filters input:disabled,.filters select:disabled{opacity:.5}
 .workspace.naver-workspace{grid-template-columns:minmax(0,2fr) minmax(350px,1fr);gap:24px}
 .naver-workspace>.ranking{position:sticky;top:18px}
